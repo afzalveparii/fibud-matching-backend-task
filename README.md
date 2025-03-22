@@ -1,21 +1,53 @@
 # Fibud Matching Backend
 
-This is a backend service for managing matches between clients and experts. It is built using [NestJS](https://nestjs.com/) and integrates with a database using Prisma.
+A robust backend service for expert-client matching, built with **NestJS**, **Prisma**, and **PostgreSQL**.
 
-## Features
+## 🚀 Features
 
-- **Create Match**: Add a new match between a client and an expert.
-- **Retrieve Matches**: Fetch matches based on specialization and rating filters.
-- **Update Match**: Update details of an existing match.
-- **Delete Match**: Remove a match from the database.
-- **Error Handling**: Comprehensive error handling for invalid inputs and missing resources.
+- **Expert Management**: CRUD operations for experts.
+- **Client Matching**: Assign clients to experts based on specialization and rating.
+- **Database Integration**: Uses **PostgreSQL** with Prisma ORM.
+- **Validation & Error Handling**: Implements DTO validation using `class-validator`.
+- **NestJS Modular Architecture**: Organized code structure following industry best practices.
 
-## Installation
+## 🛠️ Tech Stack
+
+- **Framework**: NestJS
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **Validation**: class-validator
+
+## 📂 Project Structure
+
+```bash
+fibud-matching-backend-task/
+├── src/
+│   ├── experts/
+│   │   ├── experts.controller.ts
+│   │   ├── experts.service.ts
+│   │   ├── dto/
+│   │   │   ├── create-expert.dto.ts
+│   │   │   ├── update-expert.dto.ts
+│   ├── match/
+│   │   ├── match.controller.ts
+│   │   ├── match.service.ts
+│   │   ├── dto/
+│   │   │   ├── create-match.dto.ts
+│   ├── prisma/
+│   │   ├── prisma.service.ts
+│   ├── main.ts
+├── prisma/
+│   ├── schema.prisma
+├── package.json
+└── README.md
+```
+
+## 📌 Installation
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
-   cd fibud-matching-backend
+   git clone https://github.com/afzalveparii/fibud-matching-backend-task.git
+   cd fibud-matching-backend-task
    ```
 
 2. Install dependencies:
@@ -23,88 +55,94 @@ This is a backend service for managing matches between clients and experts. It i
    npm install
    ```
 
-3. Set up the database:
-   - Configure your database connection in `prisma/schema.prisma`.
-   - Run Prisma migrations:
-     ```bash
-     npx prisma migrate dev
-     ```
+3. Set up `.env` file:
+   ```env
+   DATABASE_URL="postgresql://user:password@localhost:5432/fibud"
+   DB_HOST="localhost"
+   DB_PORT="db_Port"
+   DB_USERNAME="db_Username"
+   DB_PASSWORD="db_Password"
+   DB_NAME="fibud_matching"
+   NODE_ENV="development"
+   PORT = 3001
+   ```
 
-4. Start the development server:
+4. Apply database migrations:
+   ```bash
+   npx prisma migrate dev
+   ```
+
+5. Run the application:
    ```bash
    npm run start:dev
    ```
 
-## API Endpoints
+## 🔥 API Endpoints
 
-### Matches
-
-#### Create Match
-- **POST** `/matches`
-- **Body**:
+### Experts
+- **Create Expert**
+  ```http
+  POST /experts
+  ```
+  **Request Body:**
   ```json
   {
-    "clientName": "John Doe",
-    "expertId": "expert-id"
+    "name": "Dr. John Doe",
+    "specialization": "Cardiologist",
+    "availability": true,
+    "rating": 4.8
   }
   ```
-- **Response**: Created match object.
 
-#### Get Matches
-- **GET** `/matches`
-- **Query Parameters**:
-  - `specialization` (optional): Filter by expert specialization.
-  - `rating` (optional): Filter by minimum rating (0-5).
-- **Response**: List of matches.
+- **Get All Experts**
+  ```http
+  GET /experts
+  ```
 
-#### Update Match
-- **PUT** `/matches/:id`
-- **Body**:
+- **Get Expert by ID**
+  ```http
+  GET /experts/:id
+  ```
+
+- **Update Expert**
+  ```http
+  PATCH /experts/:id
+  ```
+
+- **Delete Expert**
+  ```http
+  DELETE /experts/:id
+  ```
+
+### Client Matching
+- **Assign Client to Expert**
+  ```http
+  POST /matches
+  ```
+  **Request Body:**
   ```json
   {
-    "clientName": "Jane Doe",
-    "expertId": "new-expert-id"
+    "clientName": "Alice Smith",
+    "expertId": "550e8400-e29b-41d4-a716-446655440000"
   }
   ```
-- **Response**: Updated match object.
 
-#### Delete Match
-- **DELETE** `/matches/:id`
-- **Response**: Deleted match confirmation.
+- **Get Matched Experts**
+  ```http
+  GET /matches?specialization=Neurologist&rating=4.5
+  ```
 
-## Error Handling
+## 🏗️ Future Improvements
+- Add authentication & authorization
+- Implement real-time updates with WebSockets
+- Enhance search and filtering capabilities
 
-- **400 Bad Request**: Invalid input data.
-- **404 Not Found**: Resource not found.
-- **500 Internal Server Error**: Unexpected server error.
+## 🤝 Contributing
+Feel free to submit issues and pull requests to improve this project.
 
-## Project Structure
-
-```
-src/
-├── match/
-│   ├── match.controller.ts  # Handles HTTP requests
-│   ├── match.service.ts     # Business logic and database operations
-│   ├── dto/
-│   │   └── create-match.dto.ts  # Data transfer object for match creation
-├── prisma/
-│   └── prisma.service.ts    # Prisma database service
-```
-
-## Technologies Used
-
-- **NestJS**: Backend framework.
-- **Prisma**: ORM for database management.
-- **TypeScript**: Programming language.
-- **PostgreSQL**: Database (or any other database supported by Prisma).
-
-## Running Tests
-
-Run the following command to execute tests:
-```bash
-npm run test
-```
-
-## License
-
+## 📜 License
 This project is licensed under the MIT License.
+
+---
+
+Made with ❤️ by [Afzal Vepari](https://github.com/afzalveparii) 🚀
