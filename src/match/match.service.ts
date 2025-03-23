@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, NotFoundException } from "@nestjs/common";
+import { Injectable, BadRequestException, NotFoundException, ConflictException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateMatchDto } from "./dto/create-match.dto";
 
@@ -11,12 +11,26 @@ export class MatchService {
       if (!dto.clientName || !dto.expertId) {
         throw new BadRequestException("Client name and expertId are required.");
       }
+
       const expert = await this.prisma.expert.findUnique({
         where: { id: dto.expertId },
       });
 
       if (!expert) {
         throw new NotFoundException(`Expert with ID ${dto.expertId} not found.`);
+      }
+
+      const existingClient = await this.prisma.client.findFirst({
+        where: {
+          name: dto.clientName,
+          expertId: dto.expertId,
+        },
+      });
+
+      if (existingClient) {
+        throw new ConflictException(
+          `A match for client "${dto.clientName}" with expert ID "${dto.expertId}" already exists in the system.`
+        );
       }
 
       return await this.prisma.client.create({
